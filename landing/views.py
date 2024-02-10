@@ -14,13 +14,20 @@ class TemplViewBook(View):
 
     def post(self, request):
         received_data = request.POST
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]  # Получение IP
+        else:
+            ip = request.META.get('REMOTE_ADDR')  # Получение IP
 
+        user_agent = request.META.get('HTTP_USER_AGENT')
         form = TemplateFormBook(received_data)  # Передали данные в форму
         if form.is_valid():
-            return JsonResponse(form.cleaned_data, json_dumps_params={'ensure_ascii': False,
-                                                                      'indent': 4})
+            return JsonResponse(form.cleaned_data | {'ip': ip, 'user_agent': user_agent},
+                                json_dumps_params={'ensure_ascii': False, 'indent': 4})
 
         return render(request, 'landing/index.html', context={"form": form})
+
 
 def index_view_l(request):
     if request.method == "GET":
