@@ -7,5 +7,4 @@ app_name = 'landing'
 
 urlpatterns = [
     path('', TemplViewBook.as_view(), name='index'),
-    # TODO добавьте здесь маршрут для вашего обработчика отображения страницы приложения landing
 ]
